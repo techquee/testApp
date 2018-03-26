@@ -1,10 +1,4 @@
-body > div,
-      body > div > div,
-      body > div > div > div.Feedback-form {
-        height: 100%;
-      background:	#F0F0F0;
-    }
-    Grid{
-      height:100%;
-      margin:auto;
-    }
+form > div > div > div {
+    padding: 0px;
+    border: none;
+  }

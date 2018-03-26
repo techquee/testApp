@@ -7,7 +7,7 @@ export const AUTH_FAIL = 'AUTH_FAIL';
 export const AUTH_LOGOUT = 'AUTH_LOGOUT';
 
 export const SET_AUTH_REDIRECT_PATH = 'SET_AUTH_REDIRECT_PATH';
-
+export const FEEDBACK_SAVED = 'FEEDBACK_SAVED'
 
 export const GET_TEST_TYPE = 'GET_TEST_TYPE';
 export const CLEAR_ERROR_MESSAGE = 'CLEAR_ERROR_MESSAGE';
