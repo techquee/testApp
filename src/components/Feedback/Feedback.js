@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { Field, reduxForm } from 'redux-form';
 import TextField from 'material-ui/TextField';
 import { RadioButton, RadioButtonGroup } from 'material-ui/RadioButton';
@@ -7,10 +7,10 @@ import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import asyncValidate from './asyncValidate';
 import validate from './validate';
-/*import { DB_CONFIG } from '../../Config/config';
-import firebase from 'firebase';
-import feedbackSaved from '../../store/actions/feedback'; 
-import {connect} from 'react-redux';*/
+import {database} from '../../Config/config';
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
+import {sendFeedback} from '../../store/actions/feedback';
 import { Header, Image, Button, Grid, Message, Form, Segment} from 'semantic-ui-react';
 import logoImg from '../../assets/logo.png';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
@@ -38,6 +38,14 @@ const renderCheckbox = ({ input, label }) => (
   />
 );
 
+const renderRadioGroup = ({ input, ...rest }) => (
+  <RadioButtonGroup
+    {...input}
+    {...rest}
+    valueSelected={input.value}
+    onChange={(event, value) => input.onChange(value)}
+  />
+)
 
 const renderSelectField = (
   { input, label, meta: { touched, error }, children, ...custom },
@@ -51,22 +59,41 @@ const renderSelectField = (
     {...custom}
   />
 );
-/*
-const handleSend = () => {
-  const feedbackFormValues = {
-    'type':'feedback',
-    'email':this.state.refs.email.value,
-    'name':this.state.refs.name.value,
-    'feedback':this.state.refs.feedback.value
+
+class Feedback extends Component{
+  constructor(props){
+    super(props);
+    this.state={
+      /* name:null,
+      email:null,
+      sendfeedback:[],*/
+      feedback:null
+    };
+    this._handleSubmit=this._handleSubmit.bind(this);
 }
-firebase.push('/feedback', feedbackFormValues)
+_handleSubmit(e){
+  this.props.sendFeedback({
+    /*name:this.state.name,
+    email:this.state.email,*/
+    feedback:this.state.feedback
+  })
   
+  this.setState({
+    /*name:'',
+    email:'',*/
+    feedback:''
+})
 }
-*/
-
-
-const Feedback = props => {
-  const { handleSubmit, pristine, reset, submitting } = props;
+/*componentDidMount(){
+  database.ref().child("feedback").on('value',(snapshot)=>{
+    console.log(Object.values(snapshot.val()));
+    this.setState({
+      feedback:Object.values(snapshot.val())
+    });
+  })
+}*/
+  render(){
+    const { pristine, submitting } = this.props;
   return (
     <MuiThemeProvider muiTheme={getMuiTheme()}>
    
@@ -78,17 +105,21 @@ const Feedback = props => {
     Give your Feedback
    </Header>
    <Segment stacked>
-    <form onSubmit={handleSubmit} className={classes.Feedback}>
+    <form onSubmit={this._handleSubmit} className={classes.Feedback}>
 
   <div>
         <Field
-          name="Name"
+          name="name"
           component={renderTextField}
           label="Name"
         />
   </div>
   <div>
-        <Field name="email" component={renderTextField} label="Email" />
+        <Field 
+        name="email" 
+        component={renderTextField} 
+        label="Email" 
+        />
   </div>
   <div>
         <Field
@@ -101,10 +132,15 @@ const Feedback = props => {
           <MenuItem value="0000ff" primaryText="Opinion" />
         </Field>
   </div>
-   
+  <div>
+        <Field name="sex" component={renderRadioGroup}>
+          <RadioButton value="male" label="male" />
+          <RadioButton value="female" label="female" />
+        </Field>
+      </div>
   <div>
         <Field
-          name="Feedback"
+          name="feedback"
           component={renderTextField}
           label="Feedback"
           multiLine={true}
@@ -112,11 +148,7 @@ const Feedback = props => {
         />
   </div>
   <div>
-        <Field name="Agree" component={renderCheckbox} label="I agree to the terms and conditions." />
-  </div>
-
-  <div>
-        <Button color="yellow" type="submit" fluid disabled={pristine || submitting}>Send</Button>
+        <Button color="yellow" onClick={()=>this._handleSubmit} type="submit" fluid disabled={pristine || submitting}>Send</Button>
   </div>
     
   </form>
@@ -131,15 +163,16 @@ const Feedback = props => {
     </MuiThemeProvider>
   );
 };
-
-export default reduxForm({
-  form: 'MaterialUiForm', // a unique identifier for this form
-  validate,
-  asyncValidate,
-})(Feedback);
-/*
-const mapDisptachToProps = dispatch => {
-  return bindActionCreators({feedbackSaved: feedbackSaved},dispatch)
 }
-export default connect(mapDisptachToProps)(Feedback)
-*/
+let form = reduxForm({
+  form: 'FeedbackForm', // a unique identifier for this form
+  validate,
+  asyncValidate
+})(Feedback);
+
+function mapDispatchToProps(dispatch){
+  return bindActionCreators({sendFeedback:sendFeedback}, dispatch)
+}
+
+form = connect(null, mapDispatchToProps)(form);
+export default form;
