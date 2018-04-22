@@ -1,5 +1,6 @@
-export default function(values) {
-  const errors = {};
+/*export default function(values) {*/
+  const validate = values =>{
+  const errors = {}
   const requiredFields = [
     'name',
     'email',
@@ -9,7 +10,7 @@ export default function(values) {
     if (!values[field]) {
       errors[field] = 'Required';
     }
-  });
+  })
   if (
     values.email &&
     !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)
@@ -18,3 +19,5 @@ export default function(values) {
   }
   return errors;
 }
+
+export default validate;

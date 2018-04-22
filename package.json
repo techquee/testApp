@@ -49,6 +49,7 @@
     "react-widgets": "^4.2.2",
     "react-widgets-moment": "^4.0.9",
     "react-widgets-moment-localizer": "^1.0.2",
+    "reactjs-popup": "^1.1.0",
     "redux": "^3.7.2",
     "redux-form": "^7.3.0",
     "redux-form-material-ui": "^4.3.3",

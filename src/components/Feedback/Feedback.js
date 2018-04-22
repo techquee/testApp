@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import { Field, reduxForm } from 'redux-form';
+import { Field, reduxForm, reset } from 'redux-form';
 import TextField from 'material-ui/TextField';
 import { RadioButton, RadioButtonGroup } from 'material-ui/RadioButton';
 import Checkbox from 'material-ui/Checkbox';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
+import Popup from 'reactjs-popup'
 import asyncValidate from './asyncValidate';
 import validate from './validate';
 import {database} from '../../Config/config';
@@ -19,8 +20,8 @@ import classes from './Feedback.css'
 
 
 const renderTextField = (
-  { input, label, meta: { touched, error }, ...custom },
-) => (
+  { input, label, meta: { touched, error }, ...custom
+  }) => (
   <TextField
     hintText={label}
     floatingLabelText={label}
@@ -28,15 +29,8 @@ const renderTextField = (
     {...input}
     {...custom}
   />
-);
+)
 
-const renderCheckbox = ({ input, label }) => (
-  <Checkbox
-    label={label}
-    checked={input.value ? true : false}
-    onCheck={input.onChange}
-  />
-);
 
 const renderRadioGroup = ({ input, ...rest }) => (
   <RadioButtonGroup
@@ -48,7 +42,7 @@ const renderRadioGroup = ({ input, ...rest }) => (
 )
 
 const renderSelectField = (
-  { input, label, meta: { touched, error }, children, ...custom },
+  { input, label, meta: { touched, error }, children, ...custom }
 ) => (
   <SelectField
     floatingLabelText={label}
@@ -60,30 +54,46 @@ const renderSelectField = (
   />
 );
 
+
 class Feedback extends Component{
   constructor(props){
     super(props);
     this.state={
-      /* name:null,
+      /*name:null,
       email:null,
-      sendfeedback:[],*/
+*/    addFormValue:'',
       feedback:null
     };
-    this._handleSubmit=this._handleSubmit.bind(this);
+ 
+    this.handleFormSubmit=this.handleFormSubmit.bind(this);
 }
-_handleSubmit(e){
+/*_handleInput(e,{name,value}){
+  this.setState({[name]:value});
+}*/
+handleFormSubmit = event =>{
+  const values = this.props;
+  alert(values);
+  const { addFormValue } = this.state;
+  const {sendFeedback } = this.props;
+  event.preventDefault();
+  sendFeedback({title: addFormValue});
+  this.setState({addFormValue: ""});
+};/*
   this.props.sendFeedback({
-    /*name:this.state.name,
-    email:this.state.email,*/
+  name:this.state.name,
+    email:this.state.email,
     feedback:this.state.feedback
   })
   
   this.setState({
     /*name:'',
-    email:'',*/
+    email:'',
     feedback:''
-})
-}
+})*/
+
+handleInputChange = event => {
+  this.setState({ addFormValue: event.target.value });
+};
 /*componentDidMount(){
   database.ref().child("feedback").on('value',(snapshot)=>{
     console.log(Object.values(snapshot.val()));
@@ -91,9 +101,17 @@ _handleSubmit(e){
       feedback:Object.values(snapshot.val())
     });
   })
+}
+submitMyForm(data) {
+  const {createRecord, resetForm} = this.props;
+  this.handleSubmit=this.handleSubmit.bind(this);
+  return createRecord(data).then(() => {
+    resetForm();
+    // do other success stuff
+  });
 }*/
   render(){
-    const { pristine, submitting } = this.props;
+    const { pristine, submitting, addFormValue, handleSubmit } = this.props;
   return (
     <MuiThemeProvider muiTheme={getMuiTheme()}>
    
@@ -105,7 +123,7 @@ _handleSubmit(e){
     Give your Feedback
    </Header>
    <Segment stacked>
-    <form onSubmit={this._handleSubmit} className={classes.Feedback}>
+    <form onSubmit={this.handleFormSubmit} className={classes.Feedback}>
 
   <div>
         <Field
@@ -133,27 +151,34 @@ _handleSubmit(e){
         </Field>
   </div>
   <div>
-        <Field name="sex" component={renderRadioGroup}>
+        <Field name="Gender" component={renderRadioGroup}>
           <RadioButton value="male" label="male" />
           <RadioButton value="female" label="female" />
         </Field>
-      </div>
+  </div>
   <div>
         <Field
           name="feedback"
           component={renderTextField}
           label="Feedback"
+          value={addFormValue}
+          onChange={this.handleInputChange}
           multiLine={true}
           rows={2}
         />
   </div>
   <div>
-        <Button color="yellow" onClick={()=>this._handleSubmit} type="submit" fluid disabled={pristine || submitting}>Send</Button>
-  </div>
+    
+    <Button color="yellow" 
+    onClick={()=>this.handleFormSubmit} fluid 
+    type="submit" 
+    disabled={pristine || submitting}>
+    Send</Button>
+    </div>
     
   </form>
     </Segment>
-    <Message size="small" color="yellow" Align='center'>
+    <Message size="small" color="yellow" align='center'>
         Your Feedback is Important to us.
     </Message>
     </Grid.Column>
@@ -165,14 +190,19 @@ _handleSubmit(e){
 };
 }
 let form = reduxForm({
-  form: 'FeedbackForm', // a unique identifier for this form
+  form: 'Feedback', // a unique identifier for this form
   validate,
   asyncValidate
 })(Feedback);
+
 
 function mapDispatchToProps(dispatch){
   return bindActionCreators({sendFeedback:sendFeedback}, dispatch)
 }
 
+function malDispatchToProps(dispatch){
+  return bindActionCreators()
+}
 form = connect(null, mapDispatchToProps)(form);
 export default form;
+
