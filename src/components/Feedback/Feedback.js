@@ -31,7 +31,6 @@ const renderTextField = (
   />
 )
 
-
 const renderRadioGroup = ({ input, ...rest }) => (
   <RadioButtonGroup
     {...input}
@@ -54,45 +53,37 @@ const renderSelectField = (
   />
 );
 
-
 class Feedback extends Component{
   constructor(props){
     super(props);
     this.state={
-      /*name:null,
-      email:null,
-*/    addFormValue:'',
-      feedback:null
+      addFormValue:'',
+      addEmailValue:'',
+      feedback:null,
+      email:null
     };
  
     this.handleFormSubmit=this.handleFormSubmit.bind(this);
 }
-/*_handleInput(e,{name,value}){
-  this.setState({[name]:value});
-}*/
 handleFormSubmit = event =>{
   const values = this.props;
   alert(values);
-  const { addFormValue } = this.state;
   const {sendFeedback } = this.props;
   event.preventDefault();
-  sendFeedback({title: addFormValue});
-  this.setState({addFormValue: ""});
-};/*
-  this.props.sendFeedback({
-  name:this.state.name,
-    email:this.state.email,
-    feedback:this.state.feedback
-  })
-  
+  sendFeedback({
+    feedback: this.state.addFormValue,
+    email:this.state.addEmailValue
+  });
   this.setState({
-    /*name:'',
-    email:'',
-    feedback:''
-})*/
+    addFormValue: "",
+    addEmailValue:""});
+};
 
 handleInputChange = event => {
-  this.setState({ addFormValue: event.target.value });
+  this.setState({
+     addFormValue:event.target.value,
+     addEmailValue:event.target.value
+   });
 };
 /*componentDidMount(){
   database.ref().child("feedback").on('value',(snapshot)=>{
@@ -111,7 +102,7 @@ submitMyForm(data) {
   });
 }*/
   render(){
-    const { pristine, submitting, addFormValue, handleSubmit } = this.props;
+    const { pristine, submitting, addFormValue,addEmailValue, handleSubmit } = this.props;
   return (
     <MuiThemeProvider muiTheme={getMuiTheme()}>
    
@@ -137,6 +128,8 @@ submitMyForm(data) {
         name="email" 
         component={renderTextField} 
         label="Email" 
+        value={addEmailValue}
+        onChange={this.handleInputChange}
         />
   </div>
   <div>
@@ -173,7 +166,8 @@ submitMyForm(data) {
     onClick={()=>this.handleFormSubmit} fluid 
     type="submit" 
     disabled={pristine || submitting}>
-    Send</Button>
+    Send
+    </Button>
     </div>
     
   </form>
@@ -200,9 +194,6 @@ function mapDispatchToProps(dispatch){
   return bindActionCreators({sendFeedback:sendFeedback}, dispatch)
 }
 
-function malDispatchToProps(dispatch){
-  return bindActionCreators()
-}
 form = connect(null, mapDispatchToProps)(form);
 export default form;
 

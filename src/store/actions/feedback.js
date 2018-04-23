@@ -3,8 +3,9 @@ import * as firebase from 'firebase';
 import * as types from './actionTypes'
 
 export function sendFeedback(feedback){
+
     return (dispatch,event)=>{
-        database.ref().push().set(
+        firebase.database().ref().push(feedback).set(
             {
                 feedback:feedback
             },
@@ -14,8 +15,7 @@ export function sendFeedback(feedback){
             }else{
                 dispatch(dispatchFeedback(feedback));
             }
-        })
-
+        });
     }
 }
 
@@ -23,8 +23,7 @@ export function sendFeedback(feedback){
 
 export function dispatchFeedback(feedback){
     return {
-        type:types.SEND_FEEDBACK,
-        feedback
+        type:types.SEND_FEEDBACK
     }
 }
 
