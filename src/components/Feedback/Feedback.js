@@ -76,12 +76,18 @@ handleFormSubmit = event =>{
   });
   this.setState({
     addFormValue: "",
-    addEmailValue:""});
+    addEmailValue:""
+  });
 };
-
 handleInputChange = event => {
   this.setState({
      addFormValue:event.target.value,
+   
+   });
+};
+handleEmailInputChange = event => {
+  this.setState({
+    
      addEmailValue:event.target.value
    });
 };
@@ -129,7 +135,7 @@ submitMyForm(data) {
         component={renderTextField} 
         label="Email" 
         value={addEmailValue}
-        onChange={this.handleInputChange}
+        onChange={this.handleEmailInputChange}
         />
   </div>
   <div>
